@@ -32,23 +32,6 @@ jobs:
             task: get-measurement
             label: 'repo checkout'
 
-      - name: setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-    
-      - name: pip install
-        shell: bash
-        run: |
-          pip install -r requirements.txt
-
-      - name: Setup Python Measurment
-        uses: green-coding-berlin/eco-ci-energy-estimation@v1
-        with:
-          task: get-measurement
-          label: 'python setup'
-
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
@@ -116,23 +99,6 @@ jobs:
         with:
             task: get-measurement
             label: 'repo checkout'
-
-      - name: setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-    
-      - name: pip install
-        shell: bash
-        run: |
-          pip install -r requirements.txt
-
-      - name: Setup Python Measurment
-        uses: green-coding-berlin/eco-ci-energy-estimation@v1
-        with:
-          task: get-measurement
-          label: 'python setup'
 
       - name: Setup Node
         uses: actions/setup-node@v3
