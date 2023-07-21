@@ -71,8 +71,14 @@ jobs:
             task: get-measurement
             label: 'Lint'
 
-      # - name: Test
-      #   run: npm run test
+      - name: Test
+        run: npm run test
+
+      - name: Measure test
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'Test'
 
       - name: Build
         run: npm run build
