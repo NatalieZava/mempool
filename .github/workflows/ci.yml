@@ -9,8 +9,8 @@ jobs:
     if: "!contains(github.event.pull_request.labels.*.name, 'ops') && !contains(github.head_ref, 'ops/')"
     strategy:
       matrix:
-        node: ["16.16.0", "18.14.1"]
-        flavor: ["dev", "prod"]
+        node: ["18.14.1"]
+        flavor: ["prod"]
       fail-fast: false
     runs-on: "ubuntu-latest"
 
@@ -26,32 +26,50 @@ jobs:
         with:
           path: ${{ matrix.node }}/${{ matrix.flavor }}
 
-      - name: Checkout Repo Measurement
+      - name: Measure checkout
         uses: green-coding-berlin/eco-ci-energy-estimation@v1
         with:
             task: get-measurement
-            label: 'repo checkout'
+            label: 'Checkout'
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           registry-url: "https://registry.npmjs.org"
+          
+      - name: Measure node setup
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'Node setup'
 
-      - name: Install (Prod dependencies only)
+      - name: Install prod dependencies
         run: npm ci --omit=dev --omit=optional
         if: ${{ matrix.flavor == 'prod'}}
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/frontend
 
-      - name: Install
+      - name: Install dependencies
         if: ${{ matrix.flavor == 'dev'}}
         run: npm ci
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/frontend
+
+      - name: Measure install dependencies
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'Install dependencies'
 
       - name: Lint
         if: ${{ matrix.flavor == 'dev'}}
         run: npm run lint
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/frontend
+
+      - name: Measure lint
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'Lint'
 
       # - name: Test
       #   run: npm run test
@@ -59,12 +77,12 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/frontend
-        
-      - name: Tests measurement
+
+      - name: Measure build
         uses: green-coding-berlin/eco-ci-energy-estimation@v1
         with:
-          task: get-measurement
-          label: 'pytest'
+            task: get-measurement
+            label: 'Build'
 
       - name: Show Energy Results
         uses: green-coding-berlin/eco-ci-energy-estimation@v1
