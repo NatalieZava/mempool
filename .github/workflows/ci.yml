@@ -70,7 +70,21 @@ jobs:
         with:
             task: get-measurement
             label: 'Lint'
-
+            
+      - name: DevSkim
+        uses: microsoft/DevSkim-Action@v1
+      
+      - name: Upload DevSkim results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+            sarif_file: devskim-results.sarif
+      
+      - name: Measure DevSkim
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'DevSkim' 
+            
       # - name: Test
       #   run: npm run test
 
