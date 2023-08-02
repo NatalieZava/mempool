@@ -9,7 +9,7 @@ jobs:
     if: "!contains(github.event.pull_request.labels.*.name, 'ops') && !contains(github.head_ref, 'ops/')"
     strategy:
       matrix:
-        node: ["18.14.1"]
+        node: ["16.16.0", "18.14.1"]
         flavor: ["prod"]
       fail-fast: false
     runs-on: "ubuntu-latest"
