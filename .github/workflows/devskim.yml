@@ -1,0 +1,47 @@
+name: DevSkim
+
+on:
+  pull_request:
+    types: [opened, review_requested, synchronize]
+
+jobs:
+  frontend:
+    if: "!contains(github.event.pull_request.labels.*.name, 'ops') && !contains(github.head_ref, 'ops/')"
+    runs-on: "ubuntu-latest"
+
+    name: Frontend DevSkim
+    steps:
+      - name: Initialize Energy Estimation
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: start-measurement
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Measure checkout
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'Checkout'
+            
+      - name: DevSkim
+        uses: microsoft/DevSkim-Action@v1
+        with:
+              directory-to-scan: frontend/src
+
+      - name: Upload DevSkim results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+            sarif_file: devskim-results.sarif
+
+      - name: Measure DevSkim
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'DevSkim'  
+            
+      - name: Show Energy Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: display-results
