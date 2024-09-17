@@ -16,10 +16,21 @@ jobs:
 
     name: Backend (${{ matrix.flavor }}) - node ${{ matrix.node }}
     steps:
+      - name: Initialize Energy Estimation
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: start-measurement
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           path: ${{ matrix.node }}/${{ matrix.flavor }}
+      
+      - name: Checkout Repo Measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'repo checkout'
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -50,6 +61,17 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/backend
+      
+      - name: Tests measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: get-measurement
+          label: 'pytest'
+
+      - name: Show Energy Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: display-results
 
   frontend:
     if: "!contains(github.event.pull_request.labels.*.name, 'ops') && !contains(github.head_ref, 'ops/')"
@@ -62,10 +84,21 @@ jobs:
 
     name: Frontend (${{ matrix.flavor }}) - node ${{ matrix.node }}
     steps:
+      - name: Initialize Energy Estimation
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: start-measurement
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           path: ${{ matrix.node }}/${{ matrix.flavor }}
+
+      - name: Checkout Repo Measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+            task: get-measurement
+            label: 'repo checkout'
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -94,3 +127,14 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ${{ matrix.node }}/${{ matrix.flavor }}/frontend
+        
+      - name: Tests measurement
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: get-measurement
+          label: 'pytest'
+
+      - name: Show Energy Results
+        uses: green-coding-berlin/eco-ci-energy-estimation@v1
+        with:
+          task: display-results
